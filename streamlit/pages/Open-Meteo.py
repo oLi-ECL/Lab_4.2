@@ -20,7 +20,7 @@ st.caption("Friendly demo with manual refresh + fallback data so it never crashe
 
 
 lat, lon = 39.7392, -104.9903  # Denver
-wurl = f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,wind_speed_10m"
+wurl = f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=temperature_2m,wind_speed_10m"
 @st.cache_data(ttl=600)
 
 
@@ -28,16 +28,16 @@ def get_weather():
     """Return (df, error_message). Never raise. Safe for beginners."""
     try:
         r = requests.get(wurl, timeout=10); r.raise_for_status()
-        j = r.json()["current"]
+        #j = r.json()["current"]
         # Handle 429 and other non-200s
         if r.status_code == 429:
             retry_after = r.headers.get("Retry-After", "a bit")
             return None, f"429 Too Many Requests — try again after {retry_after}s"
         r.raise_for_status()
         data = r.json()
-        df = pd.DataFrame([{"time": pd.to_datetime(j["time"]),
-                          "temperature": j["temperature_2m"],
-                          "wind": j["wind_speed_10m"]}])
+        df = pd.DataFrame([{"time": pd.to_datetime(["time"]),
+                          "temperature": ["temperature_2m"],
+                          "wind": ["wind_speed_10m"]}])
         return df, None
     except requests.RequestException as e:
         return None, f"Network/HTTP error: {e}"
