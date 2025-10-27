@@ -29,15 +29,21 @@ def get_weather():
                           "temperature": j["temperature_2m"],
                           "wind": j["wind_speed_10m"]}])
 
-@st.cache_data(ttl=300, show_spinner=False)   # Cache for 5 minutes
 
+# --- Auto Refresh Controls ---
+st.subheader("🔁 Auto Refresh Settings")
+
+# Let user choose how often to refresh (in seconds)
+refresh_sec = st.slider("Refresh every (sec)", 10, 120, 30)
+
+# Toggle to turn automatic refreshing on/off
+auto_refresh = st.toggle("Enable auto-refresh", value=False)
+
+# Show current refresh time
+st.caption(f"Last refreshed at: {time.strftime('%H:%M:%S')}")
 
 st.subheader("Weather")
-df, err = get_weather()
-
-if err:
-    st.warning(f"{err}\nShowing sample data so the demo continues.")
-    df = SAMPLE_DF.copy()
+df = get_weather()
 
 st.dataframe(df, use_container_width=True)
 
