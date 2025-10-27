@@ -28,7 +28,7 @@ def get_weather():
     """Return (df, error_message). Never raise. Safe for beginners."""
     try:
         r = requests.get(wurl, timeout=10); r.raise_for_status()
-        j = r.json()["current"]
+        j = r.json()["hourly"]
         # Handle 429 and other non-200s
         if r.status_code == 429:
             retry_after = r.headers.get("Retry-After", "a bit")
