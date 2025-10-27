@@ -21,6 +21,7 @@ st.caption("Friendly demo with manual refresh + fallback data so it never crashe
 
 lat, lon = 39.7392, -104.9903  # Denver
 wurl = f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,wind_speed_10m"
+HEADERS = {"User-Agent": "msudenver-dataviz-class/1.0", "Accept": "application/json"}
 @st.cache_data(ttl=600)
 def get_weather():
     r = requests.get(wurl, timeout=10); r.raise_for_status()
@@ -41,7 +42,9 @@ def fetch_prices(url: str):
             return None, f"429 Too Many Requests — try again after {retry_after}s"
         resp.raise_for_status()
         data = resp.json()
-        df = pd.DataFrame(data).T.reset_index().rename(columns={"index": "coin"})
+        df = pd.DataFrame([{"time": pd.to_datetime(j["time"]),
+                          "temperature": j["temperature_2m"],
+                          "wind": j["wind_speed_10m"]}])
         return df, None
     except requests.RequestException as e:
         return None, f"Network/HTTP error: {e}"
