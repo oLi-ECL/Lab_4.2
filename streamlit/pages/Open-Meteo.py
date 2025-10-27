@@ -47,7 +47,7 @@ df = get_weather()
 
 st.dataframe(df, use_container_width=True)
 
-fig = px.lin(df, x='time', y='temperature', title='Current Temp (Denver)')
+fig = px.line(df, x='time', y='temperature', title='Current Temp (Denver)')
 st.plotly_chart(fig, use_container_width=True)
 
 # If auto-refresh is ON, wait and rerun the app
