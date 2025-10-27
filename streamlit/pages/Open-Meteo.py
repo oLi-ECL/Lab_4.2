@@ -22,12 +22,25 @@ st.caption("Friendly demo with manual refresh + fallback data so it never crashe
 lat, lon = 39.7392, -104.9903  # Denver
 wurl = f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,wind_speed_10m"
 @st.cache_data(ttl=600)
+
 def get_weather():
     r = requests.get(wurl, timeout=10); r.raise_for_status()
     j = r.json()["current"]
-    return pd.DataFrame([{"time": pd.to_datetime(j["time"]),
+"""Return (df, error_message). Never raise. Safe for beginners."""
+    try:
+        resp = requests.get(wurl, timeout=10)
+        # Handle 429 and other non-200s
+        if resp.status_code == 429:
+            retry_after = resp.headers.get("Retry-After", "a bit")
+            return None, f"429 Too Many Requests — try again after {retry_after}s"
+        resp.raise_for_status()
+        data = resp.json()
+        df = pd.DataFrame([{"time": pd.to_datetime(j["time"]),
                           "temperature": j["temperature_2m"],
                           "wind": j["wind_speed_10m"]}])
+        return df, None
+    except requests.RequestException as e:
+        return None, f"Network/HTTP error: {e}"
 
 
 # --- Auto Refresh Controls ---
@@ -47,11 +60,11 @@ df = get_weather()
 
 st.dataframe(df, use_container_width=True)
 
-fig = px.line(df, x='time', y='temperature', title='Current Temp (Denver)')
+fig = px.line(df, x='temperature', y='wind', title='Current Temp and Wind Speed(Denver)')
 st.plotly_chart(fig, use_container_width=True)
 
 # If auto-refresh is ON, wait and rerun the app
 if auto_refresh:
     time.sleep(refresh_sec)
-    fetch_prices.clear()
+    get_weather().clear()
     st.rerun()
