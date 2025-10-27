@@ -23,18 +23,18 @@ lat, lon = 39.7392, -104.9903  # Denver
 wurl = f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,wind_speed_10m"
 @st.cache_data(ttl=600)
 
-def get_weather():
-    r = requests.get(wurl, timeout=10); r.raise_for_status()
-    j = r.json()["current"]
-"""Return (df, error_message). Never raise. Safe for beginners."""
+
+def fetch_prices(url: str):
+    """Return (df, error_message). Never raise. Safe for beginners."""
     try:
-        resp = requests.get(wurl, timeout=10)
+        r = requests.get(wurl, timeout=10); r.raise_for_status()
+        j = r.json()["current"]
         # Handle 429 and other non-200s
-        if resp.status_code == 429:
-            retry_after = resp.headers.get("Retry-After", "a bit")
+        if r.status_code == 429:
+            retry_after = r.headers.get("Retry-After", "a bit")
             return None, f"429 Too Many Requests — try again after {retry_after}s"
         resp.raise_for_status()
-        data = resp.json()
+        data = r.json()
         df = pd.DataFrame([{"time": pd.to_datetime(j["time"]),
                           "temperature": j["temperature_2m"],
                           "wind": j["wind_speed_10m"]}])
@@ -56,7 +56,11 @@ auto_refresh = st.toggle("Enable auto-refresh", value=False)
 st.caption(f"Last refreshed at: {time.strftime('%H:%M:%S')}")
 
 st.subheader("Weather")
-df = get_weather()
+df, err = get_weather()
+
+if err:
+    st.warning(f"{err}\nShowing sample data so the demo continues.")
+    df = SAMPLE_DF.copy()
 
 st.dataframe(df, use_container_width=True)
 
