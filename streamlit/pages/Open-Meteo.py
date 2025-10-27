@@ -20,7 +20,7 @@ st.caption("Friendly demo with manual refresh + fallback data so it never crashe
 
 
 lat, lon = 39.7392, -104.9903  # Denver
-wurl = f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,wind_speed_10m"
+wurl = f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=temperature_2m,wind_speed_10m"
 @st.cache_data(ttl=600)
 
 
@@ -64,7 +64,7 @@ if err:
 
 st.dataframe(df, use_container_width=True)
 
-fig = px.scatter(df, x='temperature', y='wind', title='Current Temp and Wind Speed(Denver)')
+fig = px.line(df, x='time', y='temperature', title="Today's Temp (Denver)")
 st.plotly_chart(fig, use_container_width=True)
 
 # If auto-refresh is ON, wait and rerun the app
