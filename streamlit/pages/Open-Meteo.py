@@ -31,7 +31,7 @@ def get_weather():
                           "wind": j["wind_speed_10m"]}])
 
 @st.cache_data(ttl=300, show_spinner=False)   # Cache for 5 minutes
-
+'''
 def fetch_prices(url: str):
     """Return (df, error_message). Never raise. Safe for beginners."""
     try:
@@ -48,6 +48,7 @@ def fetch_prices(url: str):
         return df, None
     except requests.RequestException as e:
         return None, f"Network/HTTP error: {e}"
+    '''
 
 # --- Auto Refresh Controls ---
 st.subheader("🔁 Auto Refresh Settings")
@@ -62,7 +63,7 @@ auto_refresh = st.toggle("Enable auto-refresh", value=False)
 st.caption(f"Last refreshed at: {time.strftime('%H:%M:%S')}")
 
 st.subheader("Weather")
-df, err = fetch_prices(wurl)
+df, err = get_weather()
 
 if err:
     st.warning(f"{err}\nShowing sample data so the demo continues.")
