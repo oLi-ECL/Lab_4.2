@@ -21,7 +21,6 @@ st.caption("Friendly demo with manual refresh + fallback data so it never crashe
 
 lat, lon = 39.7392, -104.9903  # Denver
 wurl = f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,wind_speed_10m"
-HEADERS = {"User-Agent": "msudenver-dataviz-class/1.0", "Accept": "application/json"}
 @st.cache_data(ttl=600)
 def get_weather():
     r = requests.get(wurl, timeout=10); r.raise_for_status()
@@ -32,17 +31,6 @@ def get_weather():
 
 @st.cache_data(ttl=300, show_spinner=False)   # Cache for 5 minutes
 
-# --- Auto Refresh Controls ---
-st.subheader("🔁 Auto Refresh Settings")
-
-# Let user choose how often to refresh (in seconds)
-refresh_sec = st.slider("Refresh every (sec)", 10, 120, 30)
-
-# Toggle to turn automatic refreshing on/off
-auto_refresh = st.toggle("Enable auto-refresh", value=False)
-
-# Show current refresh time
-st.caption(f"Last refreshed at: {time.strftime('%H:%M:%S')}")
 
 st.subheader("Weather")
 df, err = get_weather()
