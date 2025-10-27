@@ -20,7 +20,7 @@ st.caption("Friendly demo with manual refresh + fallback data so it never crashe
 
 
 lat, lon = 39.7392, -104.9903  # Denver
-wurl = f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=temperature_2m,wind_speed_10m"
+wurl = f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,wind_speed_10m"
 @st.cache_data(ttl=600)
 
 
@@ -28,7 +28,7 @@ def get_weather():
     """Return (df, error_message). Never raise. Safe for beginners."""
     try:
         r = requests.get(wurl, timeout=10); r.raise_for_status()
-        j = r.json()["hourly"]
+        j = r.json()["current"]
         # Handle 429 and other non-200s
         if r.status_code == 429:
             retry_after = r.headers.get("Retry-After", "a bit")
