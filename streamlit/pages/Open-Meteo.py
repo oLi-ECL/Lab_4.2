@@ -33,7 +33,7 @@ def get_weather():
         if r.status_code == 429:
             retry_after = r.headers.get("Retry-After", "a bit")
             return None, f"429 Too Many Requests — try again after {retry_after}s"
-        resp.raise_for_status()
+        r.raise_for_status()
         data = r.json()
         df = pd.DataFrame([{"time": pd.to_datetime(j["time"]),
                           "temperature": j["temperature_2m"],
