@@ -10,7 +10,7 @@ st.title(" Welcome to My Streamlit Site")
 st.markdown(
     """
     This is a two-page Streamlit app:
-    - **CoinGecko*: 
+    - **CoinGecko**: 
     - **Open-Meteo**: 
 
     Use the left sidebar to switch pages.
