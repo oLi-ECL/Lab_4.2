@@ -24,10 +24,10 @@ wurl = f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&c
 @st.cache_data(ttl=600)
 
 
-def get_weather(url):
+def get_weather():
     """Return (df, error_message). Never raise. Safe for beginners."""
     try:
-        r = requests.get(url, timeout=10); r.raise_for_status()
+        r = requests.get(wurl, timeout=10); r.raise_for_status()
         j = r.json()["current"]
         # Handle 429 and other non-200s
         if r.status_code == 429:
