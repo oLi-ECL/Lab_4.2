@@ -31,24 +31,6 @@ def get_weather():
                           "wind": j["wind_speed_10m"]}])
 
 @st.cache_data(ttl=300, show_spinner=False)   # Cache for 5 minutes
-'''
-def fetch_prices(url: str):
-    """Return (df, error_message). Never raise. Safe for beginners."""
-    try:
-        resp = requests.get(wurl, timeout=10, headers=HEADERS)
-        # Handle 429 and other non-200s
-        if resp.status_code == 429:
-            retry_after = resp.headers.get("Retry-After", "a bit")
-            return None, f"429 Too Many Requests — try again after {retry_after}s"
-        resp.raise_for_status()
-        data = resp.json()
-        df = pd.DataFrame([{"time": pd.to_datetime(j["time"]),
-                          "temperature": j["temperature_2m"],
-                          "wind": j["wind_speed_10m"]}])
-        return df, None
-    except requests.RequestException as e:
-        return None, f"Network/HTTP error: {e}"
-    '''
 
 # --- Auto Refresh Controls ---
 st.subheader("🔁 Auto Refresh Settings")
