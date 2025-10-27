@@ -65,7 +65,7 @@ if err:
 st.dataframe(df, use_container_width=True)
 
 fig = px.line(df, x='time', y='temperature', title="Today's Temp (Denver)")
-#st.plotly_chart(fig, use_container_width=True)
+st.plotly_chart(fig, use_container_width=True)
 
 # If auto-refresh is ON, wait and rerun the app
 if auto_refresh:
